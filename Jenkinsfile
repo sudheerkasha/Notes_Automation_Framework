@@ -133,7 +133,6 @@ pipeline {
                     -v ^
                     --junitxml=reports/results.xml ^
                     --alluredir=reports/allure-results ^
-                    -n ${params.PARALLEL_WORKERS} ^
                     --reruns=2 ^
                     --reruns-delay=2
                     """
