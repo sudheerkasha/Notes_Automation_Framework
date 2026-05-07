@@ -497,7 +497,7 @@ def test_api_delete_ui_verify(self, e2e_setup):
         # VERIFY DELETE
         with allure.step("Verify deletion in UI"):
 
-            notes_page.refresh_page()
+            driver.get(driver.current_url)
 
             self.wait_for_page(driver)
 
@@ -520,7 +520,7 @@ def test_api_delete_ui_verify(self, e2e_setup):
         notes_page = ctx["notes_page"]
         driver = ctx["driver"]
 
-        notes_page.refresh_page()
+        driver.get(driver.current_url)
 
         self.wait_for_page(driver)
 
