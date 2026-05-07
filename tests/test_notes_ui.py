@@ -1,11 +1,3 @@
-"""
-============================================
-Notes UI Test Module
-============================================
-Tests for note CRUD operations via the UI.
-Covers: create note, verify display, note details.
-"""
-
 import pytest
 import allure
 
@@ -37,7 +29,7 @@ class TestNotesUI:
         notes_page.create_note(title, description, "Home")
         assert notes_page.is_note_displayed(title), \
             f"Note '{title}' should appear on dashboard after creation"
-        logger.info("✅ TC-09: Create Home note PASSED")
+        logger.info(" TC-09: Create Home note PASSED")
 
     @allure.story("Create Note")
     @pytest.mark.ui
@@ -52,7 +44,7 @@ class TestNotesUI:
         notes_page.create_note(title, description, "Work")
         assert notes_page.is_note_displayed(title), \
             f"Note '{title}' should appear on dashboard"
-        logger.info("✅ TC-10: Create Work note PASSED")
+        logger.info(" TC-10: Create Work note PASSED")
 
     @allure.story("Create Note")
     @pytest.mark.ui
@@ -67,7 +59,7 @@ class TestNotesUI:
         notes_page.create_note(title, description, "Personal")
         assert notes_page.is_note_displayed(title), \
             f"Note '{title}' should appear on dashboard"
-        logger.info("✅ TC-11: Create Personal note PASSED")
+        logger.info(" TC-11: Create Personal note PASSED")
 
     # ----- NOTE LIST TESTS -----
 
@@ -86,7 +78,7 @@ class TestNotesUI:
         new_count = notes_page.get_note_count()
         assert new_count == initial_count + 1, \
             f"Note count should increase by 1: was {initial_count}, now {new_count}"
-        logger.info("✅ TC-12: Instant note display PASSED")
+        logger.info(" TC-12: Instant note display PASSED")
 
     @allure.story("Note List")
     @pytest.mark.ui
@@ -105,7 +97,7 @@ class TestNotesUI:
         for title in titles:
             assert title in displayed_titles, \
                 f"Note '{title}' should be in the list"
-        logger.info("✅ TC-13: Multiple notes creation PASSED")
+        logger.info(" TC-13: Multiple notes creation PASSED")
 
     # ----- DELETE NOTE TESTS -----
 
@@ -124,4 +116,4 @@ class TestNotesUI:
         notes_page.delete_note_by_title(title)
         assert not notes_page.is_note_displayed(title), \
             f"Note '{title}' should be removed after deletion"
-        logger.info("✅ TC-14: Delete note via UI PASSED")
+        logger.info(" TC-14: Delete note via UI PASSED")
