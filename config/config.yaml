@@ -1,7 +1,3 @@
-# ============================================
-# Framework Configuration
-# ============================================
-
 # --- Application URLs ---
 app:
   base_url: "https://practice.expandtesting.com/notes/app"
@@ -10,11 +6,10 @@ app:
   register_url: "https://practice.expandtesting.com/notes/app/register"
 
 # --- Test User Credentials ---
-# These are dynamically created during test setup
 test_user:
-  name: "Test Automation User"
-  email: "testautomation_capstone@expandtesting.com"
-  password: "TestPass@123"
+  name: "sudheerkasha"
+  email: "sudheerkasha2@gmail.com"
+  password: "Sudheer@123"
 
 # --- Browser Configuration ---
 browser:
