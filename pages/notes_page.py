@@ -1,11 +1,3 @@
-"""
-============================================
-Notes Page Object
-============================================
-Page Object for the Notes dashboard page.
-Handles note creation, viewing, deletion, and verification.
-"""
-
 import time
 import allure
 from selenium.webdriver.common.by import By
