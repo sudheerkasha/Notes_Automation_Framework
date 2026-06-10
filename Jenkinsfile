@@ -104,6 +104,25 @@ stages {
             '''
         }
     }
+    stage('Browser Debug') {
+    steps {
+        sh '''
+            echo "===== CHROME ====="
+            google-chrome --version || true
+
+            echo "===== CHROMIUM ====="
+            chromium --version || true
+
+            echo "===== CHROMEDRIVER ====="
+            chromedriver --version || true
+
+            echo "===== PATH ====="
+            which google-chrome || true
+            which chromium || true
+            which chromedriver || true
+        '''
+    }
+}
 
     stage('Run Tests') {
         steps {
