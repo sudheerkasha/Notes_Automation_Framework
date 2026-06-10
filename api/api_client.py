@@ -1,6 +1,8 @@
+import os
 import time
 import allure
 import requests
+from urllib3.exceptions import InsecureRequestWarning
 
 from api.endpoints import Endpoints
 from utils.logger import get_logger
@@ -29,9 +31,20 @@ class APIClient:
         )
         self.api_config = get_api_config()
         self.timeout = self.api_config.get("timeout", 30)
+        self.verify_ssl = os.getenv(
+            "API_VERIFY_SSL",
+            str(self.api_config.get("verify_ssl", True))
+        ).lower() in ("1", "true", "yes", "on")
+
+        if not self.verify_ssl:
+            requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
         self.token = None
         self.session = requests.Session()
-        logger.info(f"API Client initialized: {self.base_url}")
+        self.session.verify = self.verify_ssl
+        logger.info(
+            f"API Client initialized: {self.base_url} | verify_ssl={self.verify_ssl}"
+        )
 
     def _get_url(self, endpoint: str) -> str:
         """Builds full URL from endpoint path."""
@@ -60,7 +73,10 @@ class APIClient:
             attachment_type=allure.attachment_type.TEXT,
         )
 
-    # user management endpoints
+    # ============================================
+    # USER ENDPOINTS
+    # ============================================
+
     @allure.step("API: Register user - {email}")
     def register_user(self, name: str, email: str, password: str):
         """
@@ -86,7 +102,14 @@ class APIClient:
     @allure.step("API: Login user - {email}")
     def login(self, email: str, password: str):
         """
-        Authenticates a user and retrieves an auth token.
+        Authenticates a user and stores the auth token.
+
+        Args:
+            email: User's email.
+            password: User's password.
+
+        Returns:
+            requests.Response: API response object.
         """
         data = {"email": email, "password": password}
         response = self.session.post(
@@ -142,11 +165,22 @@ class APIClient:
         self._log_response(response, "DELETE", Endpoints.DELETE_ACCOUNT)
         return response
 
-    # notes management endpoints
+    # ============================================
+    # NOTE ENDPOINTS
+    # ============================================
+
     @allure.step("API: Create note - {title}")
     def create_note(self, title: str, description: str, category: str = "Home"):
         """
-        Creates a new note for the authenticated user and assigns it to a category.
+        Creates a new note.
+
+        Args:
+            title: Note title.
+            description: Note description.
+            category: Note category (Home/Work/Personal).
+
+        Returns:
+            requests.Response: API response object.
         """
         data = {
             "title": title,
@@ -177,6 +211,12 @@ class APIClient:
     def get_note_by_id(self, note_id: str):
         """
         Retrieves a specific note by its ID.
+
+        Args:
+            note_id: The note's unique identifier.
+
+        Returns:
+            requests.Response: API response object.
         """
         endpoint = Endpoints.note_by_id(note_id)
         response = self.session.get(
@@ -191,7 +231,17 @@ class APIClient:
     def update_note(self, note_id: str, title: str, description: str,
                     completed: bool = False, category: str = "Home"):
         """
-        Updates an existing note's details, including title, description, completion status, and category.
+        Updates an existing note.
+
+        Args:
+            note_id: Note ID to update.
+            title: Updated title.
+            description: Updated description.
+            completed: Completion status.
+            category: Note category.
+
+        Returns:
+            requests.Response: API response object.
         """
         data = {
             "title": title,
@@ -212,7 +262,13 @@ class APIClient:
     @allure.step("API: Delete note - {note_id}")
     def delete_note(self, note_id: str):
         """
-        Deletes a note by its ID and removes it from the user's notes list.
+        Deletes a note by its ID.
+
+        Args:
+            note_id: Note ID to delete.
+
+        Returns:
+            requests.Response: API response object.
         """
         endpoint = Endpoints.note_by_id(note_id)
         response = self.session.delete(
@@ -226,7 +282,14 @@ class APIClient:
     @allure.step("API: Toggle note completion - {note_id}")
     def update_note_status(self, note_id: str, completed: bool):
         """
-        Updates only the completion status of a note, allowing users to mark notes as completed or not completed without changing other details.
+        Updates only the completion status of a note.
+
+        Args:
+            note_id: Note ID.
+            completed: New completion status.
+
+        Returns:
+            requests.Response: API response object.
         """
         endpoint = Endpoints.note_by_id(note_id)
         data = {"completed": str(completed).lower()}
@@ -239,7 +302,10 @@ class APIClient:
         self._log_response(response, "PATCH", endpoint)
         return response
 
-    # health check endpoint
+    # ============================================
+    # HEALTH CHECK
+    # ============================================
+
     @allure.step("API: Health check")
     def health_check(self):
         """Checks if the API service is healthy."""
