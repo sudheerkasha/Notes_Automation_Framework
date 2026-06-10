@@ -41,7 +41,6 @@ def create_driver(browser_name: str = None, headless: bool = None):
         f"Creating {browser} driver "
         f"(headless={is_headless}, execution={execution_mode})"
     )
-
     if browser == "chrome":
 
     options = webdriver.ChromeOptions()
