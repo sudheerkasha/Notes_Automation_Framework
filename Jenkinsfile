@@ -1,6 +1,7 @@
 pipeline {
 agent any
 
+```
 parameters {
     choice(
         name: 'BROWSER',
@@ -38,14 +39,7 @@ stages {
 
     stage('Checkout') {
         steps {
-            checkout([
-                $class: 'GitSCM',
-                branches: [[name: '*/main']],
-                userRemoteConfigs: [[
-                    url: 'https://github.com/sudheerkasha/Notes_automation_Framework'
-                ]]
-            ])
-
+            checkout scm
             echo 'Code checked out successfully'
         }
     }
@@ -53,9 +47,16 @@ stages {
     stage('Verify Environment') {
         steps {
             sh '''
+                echo "Workspace:"
                 pwd
+
+                echo "Files:"
                 ls -la
+
+                echo "Python Version:"
                 python3 --version
+
+                echo "Python Location:"
                 which python3
             '''
         }
@@ -65,9 +66,11 @@ stages {
         steps {
             sh '''
                 python3 -m venv venv
+
                 . venv/bin/activate
 
                 python --version
+
                 pip install --upgrade pip
 
                 mkdir -p reports
@@ -79,21 +82,34 @@ stages {
     }
 
     stage('API Health Check') {
-    steps {
-        sh '''
-            . venv/bin/activate
-            python -c "import requests; r=requests.get('https://practice.expandtesting.com/notes/api/health-check'); print('API Status:', r.status_code)"
-        '''
+        steps {
+            sh '''
+                . venv/bin/activate
+
+                python -c 'import requests; r=requests.get("https://practice.expandtesting.com/notes/api/health-check"); print("API Status:", r.status_code)'
+            '''
+        }
     }
-}
+
+    stage('Verify Test Structure') {
+        steps {
+            sh '''
+                echo "Current Directory:"
+                pwd
+
+                echo "Project Files:"
+                ls -la
+
+                echo "Tests Folder:"
+                ls -la tests || true
+            '''
+        }
+    }
 
     stage('Run Tests') {
         steps {
             sh '''
                 . venv/bin/activate
-
-                ls -la
-                ls -la tests || true
 
                 pytest tests \
                 -v \
@@ -121,6 +137,8 @@ post {
 
     always {
 
+        echo 'Archiving reports...'
+
         archiveArtifacts(
             artifacts: 'reports/**/*',
             allowEmptyArchive: true
@@ -137,13 +155,13 @@ post {
     }
 
     failure {
-        echo 'Tests FAILED. Check console and Allure report.'
+        echo 'Tests FAILED. Check console logs and Allure report.'
     }
 
     cleanup {
         cleanWs()
     }
 }
-
+```
 
 }
