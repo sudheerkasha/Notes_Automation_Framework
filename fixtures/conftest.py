@@ -1,14 +1,3 @@
-"""
-============================================
-Central Conftest - Pytest Fixtures
-============================================
-Main fixture file providing:
-- WebDriver setup/teardown with screenshot on failure
-- API client with authenticated session
-- Test user creation and cleanup
-- Allure environment info
-"""
-
 import os
 import pytest
 import allure
