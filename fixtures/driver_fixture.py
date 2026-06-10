@@ -41,9 +41,7 @@ def create_driver(browser_name: str = None, headless: bool = None):
     print(f"Browser value = [{browser}]")
     
     if browser == "chrome":
-
-    options = webdriver.ChromeOptions()
-
+        options = webdriver.ChromeOptions()
     if is_headless:
         options.add_argument("--headless=new")
 
