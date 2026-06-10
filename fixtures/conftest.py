@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 # WEBDRIVER FIXTURES
 # ============================================
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def driver(request):
     """
     Creates a WebDriver instance for each test function.
