@@ -1,11 +1,3 @@
-# """
-
-# WebDriver Fixture Module
-
-Selenium WebDriver factory for Chrome and Edge.
-Optimized for Jenkins Linux execution.
-"""
-
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service as EdgeService
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
@@ -16,11 +8,6 @@ from utils.config_reader import get_browser_config
 logger = get_logger(**name**)
 
 def create_driver(browser_name: str = None, headless: bool = None):
-"""
-Create and configure browser driver.
-"""
-
-```
 config = get_browser_config()
 
 browser = (
@@ -50,13 +37,8 @@ page_load_timeout = config.get(
 )
 
 logger.info(
-    f"Creating {browser} driver "
-    f"(headless={is_headless})"
+    f"Creating {browser} driver (headless={is_headless})"
 )
-
-# ==========================================
-# CHROME
-# ==========================================
 
 if browser == "chrome":
 
@@ -66,38 +48,21 @@ if browser == "chrome":
         options.add_argument("--headless=new")
 
     options.add_argument(f"--window-size={window_size}")
-
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--disable-extensions")
     options.add_argument("--disable-notifications")
-
-    options.add_argument(
-        "--remote-allow-origins=*"
-    )
+    options.add_argument("--remote-allow-origins=*")
 
     options.add_experimental_option(
         "excludeSwitches",
         ["enable-logging"]
     )
 
-    options.add_experimental_option(
-        "useAutomationExtension",
-        False
-    )
-
-    logger.info(
-        "Starting Chrome using Selenium Manager"
-    )
-
     driver = webdriver.Chrome(
         options=options
     )
-
-# ==========================================
-# EDGE
-# ==========================================
 
 elif browser == "edge":
 
@@ -122,10 +87,6 @@ else:
         f"Unsupported browser: {browser}"
     )
 
-# ==========================================
-# COMMON CONFIGURATION
-# ==========================================
-
 driver.implicitly_wait(
     implicit_wait
 )
@@ -138,8 +99,7 @@ try:
     driver.maximize_window()
 except Exception:
     logger.info(
-        "Headless mode detected. "
-        "Skipping maximize_window()."
+        "Headless mode detected. Skipping maximize_window()."
     )
 
 logger.info(
@@ -147,4 +107,3 @@ logger.info(
 )
 
 return driver
-```
