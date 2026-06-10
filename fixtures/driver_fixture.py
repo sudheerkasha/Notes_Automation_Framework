@@ -42,36 +42,43 @@ def create_driver(browser_name: str = None, headless: bool = None):
     
     if browser == "chrome":
         options = webdriver.ChromeOptions()
-    if is_headless:
-        options.add_argument("--headless=new")
-
-    options.add_argument(f"--window-size={window_size}")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-extensions")
-    options.add_argument("--disable-notifications")
-    options.add_argument("--remote-allow-origins=*")
-
-    driver = webdriver.Chrome(
-        options=options
-    )
-    elif browser == "edge":
-       options = webdriver.EdgeOptions()
-    if is_headless:
-       options.add_argument("--headless=new")
-    driver = webdriver.Edge(
-        service=EdgeService(
-            EdgeChromiumDriverManager().install()
-        ),
-        options=options
-     )
-    else:
-    print(f"Unsupported browser received: [{browser}]")
-    raise ValueError(
-        f"Unsupported browser: {browser}"
-    )
+        if is_headless:
+            options.add_argument("--headless=new")
+        options.add_argument(f"--window-size={window_size}")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-notifications")
+        options.add_argument("--remote-allow-origins=*")
+        
+        options.add_experimental_option(
+            "excludeSwitches",
+            ["enable-logging"]
+        )
+        
+        driver = webdriver.Chrome(
+            options=options
+        )
     
+    elif browser == "edge":
+        options = webdriver.EdgeOptions()
+        if is_headless:
+            options.add_argument("--headless=new")
+
+        options.add_argument(
+            f"--window-size={window_size}"
+        )
+        driver = webdriver.Edge(
+            service=EdgeService(
+                EdgeChromiumDriverManager().install()
+            ),
+            options=options
+        )
+    else:
+        raise ValueError(
+            f"Unsupported browser: {browser}"
+        )
     # if browser == "chrome":
     #     options = webdriver.ChromeOptions()
     # if is_headless:
