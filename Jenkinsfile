@@ -43,7 +43,7 @@ stages {
                 $class: 'GitSCM',
                 branches: [[name: '*/main']],
                 userRemoteConfigs: [[
-                    url: 'https://github.com/sudheerkasha/CAPSTONE.git'
+                    url: 'https://github.com/sudheerkasha/Notes_automation_Framework'
                 ]]
             ])
 
