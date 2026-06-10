@@ -1,10 +1,3 @@
-"""
-============================================
-Register Page Object
-============================================
-Page Object for the Notes Application Registration page.
-URL: https://practice.expandtesting.com/notes/app/register
-"""
 
 import allure
 from selenium.webdriver.common.by import By
