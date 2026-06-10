@@ -90,20 +90,16 @@ stages {
         }
     }
 
-    stage('Verify Test Structure') {
-        steps {
-            sh '''
-                echo "Current Directory:"
-                pwd
-
-                echo "Project Files:"
-                ls -la
-
-                echo "Tests Folder:"
-                ls -la tests || true
-            '''
-        }
+    stage('System Info') {
+    steps {
+        sh '''
+            free -h
+            df -h
+            nproc
+            google-chrome --version
+        '''
     }
+}
     stage('Chrome Test') {
     steps {
         sh '''
