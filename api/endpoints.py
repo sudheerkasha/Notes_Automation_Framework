@@ -1,12 +1,3 @@
-"""
-============================================
-API Endpoints Module
-============================================
-Centralized API endpoint definitions for the Notes API.
-Base URL: https://practice.expandtesting.com/notes/api
-"""
-
-
 class Endpoints:
     """All API endpoint paths as class constants."""
 
