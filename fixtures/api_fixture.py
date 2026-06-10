@@ -1,11 +1,3 @@
-"""
-============================================
-API Fixture Module
-============================================
-Pytest fixtures for API client lifecycle management.
-Handles user registration, login, and cleanup.
-"""
-
 import pytest
 from api.api_client import APIClient
 from utils.logger import get_logger
