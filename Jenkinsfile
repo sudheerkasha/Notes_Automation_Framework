@@ -79,19 +79,12 @@ stages {
     }
 
     stage('API Health Check') {
-        steps {
-            sh '''
-                . venv/bin/activate
-
-                python -c "
-```
-
-import requests
-r=requests.get('https://practice.expandtesting.com/notes/api/health-check')
-print('API Status:', r.status_code)
-"
-'''
-}
+    steps {
+        sh '''
+            . venv/bin/activate
+            python -c "import requests; r=requests.get('https://practice.expandtesting.com/notes/api/health-check'); print('API Status:', r.status_code)"
+        '''
+    }
 }
 
     stage('Run Tests') {
