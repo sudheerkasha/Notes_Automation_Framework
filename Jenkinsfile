@@ -1,7 +1,6 @@
 pipeline {
 agent any
 
-```
 parameters {
     choice(
         name: 'BROWSER',
@@ -153,6 +152,6 @@ post {
         cleanWs()
     }
 }
-```
+
 
 }
