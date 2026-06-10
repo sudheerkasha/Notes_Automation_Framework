@@ -104,22 +104,13 @@ stages {
             '''
         }
     }
-    stage('Browser Debug') {
+    stage('Chrome Test') {
     steps {
         sh '''
-            echo "===== CHROME ====="
-            google-chrome --version || true
-
-            echo "===== CHROMIUM ====="
-            chromium --version || true
-
-            echo "===== CHROMEDRIVER ====="
-            chromedriver --version || true
-
-            echo "===== PATH ====="
-            which google-chrome || true
-            which chromium || true
-            which chromedriver || true
+        google-chrome --headless=new \
+        --no-sandbox \
+        --disable-dev-shm-usage \
+        --dump-dom https://google.com
         '''
     }
 }
