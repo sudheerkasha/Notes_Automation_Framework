@@ -44,27 +44,29 @@ def create_driver(browser_name: str = None, headless: bool = None):
 
     if browser == "chrome":
 
-        options = webdriver.ChromeOptions()
+    options = webdriver.ChromeOptions()
 
-        if is_headless:
-            options.add_argument("--headless=new")
+    if is_headless:
+        options.add_argument("--headless=new")
 
-        options.add_argument(f"--window-size={window_size}")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--disable-software-rasterizer")
-        options.add_argument("--disable-extensions")
-        options.add_argument("--disable-notifications")
+    options.add_argument(f"--window-size={window_size}")
 
-        options.add_argument(
-            "--remote-allow-origins=*"
-        )
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-software-rasterizer")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-notifications")
 
-        options.add_experimental_option(
-            "excludeSwitches",
-            ["enable-logging"]
-        )
+    options.add_argument("--remote-allow-origins=*")
+    options.add_argument("--remote-debugging-port=9222")
+    options.add_argument("--disable-setuid-sandbox")
+    options.add_argument("--disable-features=VizDisplayCompositor")
+
+    options.add_experimental_option(
+        "excludeSwitches",
+        ["enable-logging"]
+    )
 
         if execution_mode == "remote":
 
