@@ -1,17 +1,3 @@
-"""
-============================================
-Login Page Object
-============================================
-Page Object for the Notes Application Login page.
-URL: https://practice.expandtesting.com/notes/app/login
-
-Handles:
-- User login with email & password
-- Login validation
-- Error message extraction
-- Navigation to registration page
-"""
-
 import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
