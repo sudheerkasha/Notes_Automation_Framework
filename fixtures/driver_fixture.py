@@ -5,9 +5,11 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from utils.logger import get_logger
 from utils.config_reader import get_browser_config
 
-logger = get_logger(__name__)
+logger = get_logger(**name**)
 
 def create_driver(browser_name: str = None, headless: bool = None):
+
+```
 config = get_browser_config()
 
 browser = (
@@ -107,3 +109,4 @@ logger.info(
 )
 
 return driver
+```
