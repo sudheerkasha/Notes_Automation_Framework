@@ -1,3 +1,11 @@
+"""
+============================================
+Notes API Test Module
+============================================
+Tests for Notes REST API endpoints.
+Covers: CRUD operations, response validation, performance.
+"""
+
 import pytest
 import allure
 
@@ -22,7 +30,7 @@ class TestNotesAPI:
         response = api_client.health_check()
         assert response.status_code == 200, \
             f"Health check should return 200, got {response.status_code}"
-        logger.info(" TC-15: API health check PASSED")
+        logger.info("✅ TC-15: API health check PASSED")
 
     # ----- GET NOTES -----
 
@@ -39,20 +47,20 @@ class TestNotesAPI:
         data = response.json()
         assert data["success"] is True
         assert "data" in data
-        logger.info(" TC-16: GET all notes PASSED")
+        logger.info("✅ TC-16: GET all notes PASSED")
 
-    # @allure.story("Get Notes")
-    # @pytest.mark.api
-    # @pytest.mark.regression
-    # def test_get_notes_returns_list(self, authenticated_api):
-    #     """TC-17: Verify GET /notes returns a list."""
-    #     api, user_info = authenticated_api
-    #     response = api.get_all_notes()
+    @allure.story("Get Notes")
+    @pytest.mark.api
+    @pytest.mark.regression
+    def test_get_notes_returns_list(self, authenticated_api):
+        """TC-17: Verify GET /notes returns a list."""
+        api, user_info = authenticated_api
+        response = api.get_all_notes()
 
-    #     data = response.json()
-    #     assert isinstance(data["data"], list), \
-    #         "Notes data should be a list"
-    #     logger.info(" TC-17: Notes list format PASSED")
+        data = response.json()
+        assert isinstance(data["data"], list), \
+            "Notes data should be a list"
+        logger.info("✅ TC-17: Notes list format PASSED")
 
     # ----- CREATE NOTE VIA API -----
 
@@ -74,7 +82,7 @@ class TestNotesAPI:
         assert data["success"] is True
         assert data["data"]["title"] == title
         assert data["data"]["category"] == "Work"
-        logger.info("TC-18: Create note API PASSED")
+        logger.info("✅ TC-18: Create note API PASSED")
 
     # ----- GET NOTE BY ID -----
 
@@ -94,7 +102,7 @@ class TestNotesAPI:
         response = api.get_note_by_id(note_id)
         assert response.status_code == 200
         assert response.json()["data"]["title"] == title
-        logger.info(" TC-19: Get note by ID PASSED")
+        logger.info("✅ TC-19: Get note by ID PASSED")
 
     # ----- DELETE NOTE -----
 
@@ -117,7 +125,7 @@ class TestNotesAPI:
         get_resp = api.get_note_by_id(note_id)
         assert get_resp.status_code != 200, \
             "Deleted note should not be retrievable"
-        logger.info(" TC-20: Delete note API PASSED")
+        logger.info("✅ TC-20: Delete note API PASSED")
 
     # ----- UPDATE NOTE -----
 
@@ -136,36 +144,36 @@ class TestNotesAPI:
         )
         assert update_resp.status_code == 200
         assert update_resp.json()["data"]["title"] == "Updated Title"
-        logger.info(" TC-21: Update note API PASSED")
+        logger.info("✅ TC-21: Update note API PASSED")
 
     # ----- PERFORMANCE TESTS -----
 
-    # @allure.story("Performance")
-    # @allure.severity(allure.severity_level.NORMAL)
-    # @pytest.mark.api
-    # @pytest.mark.performance
-    # def test_get_notes_response_time(self, authenticated_api):
-    #     """TC-22: Verify GET /notes response time < 2 seconds."""
-    #     api, user_info = authenticated_api
-    #     response = api.get_all_notes()
+    @allure.story("Performance")
+    @allure.severity(allure.severity_level.NORMAL)
+    @pytest.mark.api
+    @pytest.mark.performance
+    def test_get_notes_response_time(self, authenticated_api):
+        """TC-22: Verify GET /notes response time < 2 seconds."""
+        api, user_info = authenticated_api
+        response = api.get_all_notes()
 
-    #     elapsed = response.elapsed.total_seconds()
-    #     assert elapsed < 2.0, \
-    #         f"Response time {elapsed:.2f}s exceeds 2s threshold"
-    #     logger.info(f"TC-22: Response time {elapsed:.2f}s PASSED")
+        elapsed = response.elapsed.total_seconds()
+        assert elapsed < 2.0, \
+            f"Response time {elapsed:.2f}s exceeds 2s threshold"
+        logger.info(f"✅ TC-22: Response time {elapsed:.2f}s PASSED")
 
-    # @allure.story("Performance")
-    # @pytest.mark.api
-    # @pytest.mark.performance
-    # def test_create_note_response_time(self, authenticated_api):
-    #     """TC-23: Verify POST /notes response time < 2 seconds."""
-    #     api, user_info = authenticated_api
-    #     response = api.create_note("Perf Test", "Performance check", "Home")
+    @allure.story("Performance")
+    @pytest.mark.api
+    @pytest.mark.performance
+    def test_create_note_response_time(self, authenticated_api):
+        """TC-23: Verify POST /notes response time < 2 seconds."""
+        api, user_info = authenticated_api
+        response = api.create_note("Perf Test", "Performance check", "Home")
 
-    #     elapsed = response.elapsed.total_seconds()
-    #     assert elapsed < 2.0, \
-    #         f"Response time {elapsed:.2f}s exceeds 2s threshold"
-    #     logger.info(f" TC-23: Create note time {elapsed:.2f}s PASSED")
+        elapsed = response.elapsed.total_seconds()
+        assert elapsed < 2.0, \
+            f"Response time {elapsed:.2f}s exceeds 2s threshold"
+        logger.info(f"✅ TC-23: Create note time {elapsed:.2f}s PASSED")
 
     # ----- NEGATIVE / AUTH TESTS -----
 
@@ -177,18 +185,18 @@ class TestNotesAPI:
         response = api_client.get_all_notes()
         assert response.status_code == 401, \
             f"Should return 401 without auth, got {response.status_code}"
-        logger.info(" TC-24: Unauthorized access PASSED")
+        logger.info("✅ TC-24: Unauthorized access PASSED")
 
-    # @allure.story("Negative Scenarios")
-    # @pytest.mark.api
-    # @pytest.mark.negative
-    # def test_delete_nonexistent_note(self, authenticated_api):
-    #     """TC-25: Verify error when deleting non-existent note."""
-    #     api, user_info = authenticated_api
-    #     response = api.delete_note("000000000000000000000000")
-    #     assert response.status_code != 200, \
-    #         "Should fail for non-existent note ID"
-    #     logger.info(" TC-25: Delete non-existent note PASSED")
+    @allure.story("Negative Scenarios")
+    @pytest.mark.api
+    @pytest.mark.negative
+    def test_delete_nonexistent_note(self, authenticated_api):
+        """TC-25: Verify error when deleting non-existent note."""
+        api, user_info = authenticated_api
+        response = api.delete_note("000000000000000000000000")
+        assert response.status_code != 200, \
+            "Should fail for non-existent note ID"
+        logger.info("✅ TC-25: Delete non-existent note PASSED")
 
     @allure.story("Response Validation")
     @pytest.mark.api
@@ -203,4 +211,5 @@ class TestNotesAPI:
                            "completed", "created_at", "updated_at"]
         for field in required_fields:
             assert field in data, f"Field '{field}' missing from response"
-        logger.info(" TC-26: Response schema PASSED")
+        logger.info("✅ TC-26: Response schema PASSED")
+
