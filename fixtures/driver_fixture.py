@@ -10,7 +10,7 @@ logger = get_logger(__name__)
 
 def create_driver(browser_name: str = None, headless: bool = None):
 
-```
+
 config = get_browser_config()
 
 browser = (
@@ -160,4 +160,3 @@ logger.info(
 )
 
 return driver
-```
