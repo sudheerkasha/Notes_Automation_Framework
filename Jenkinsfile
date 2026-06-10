@@ -1,221 +1,158 @@
-// ============================================
-// Jenkins CI/CD Pipeline
-// UI + API Hybrid Automation Framework
-// ============================================
-
 pipeline {
-    agent any
+agent any
 
-    parameters {
-        choice(
-            name: 'BROWSER',
-            choices: ['chrome', 'firefox', 'edge'],
-            description: 'Browser for UI tests'
-        )
+```
+parameters {
+    choice(
+        name: 'BROWSER',
+        choices: ['chrome', 'firefox', 'edge'],
+        description: 'Browser for UI tests'
+    )
 
-        choice(
-            name: 'ENV',
-            choices: ['dev', 'staging', 'production'],
-            description: 'Target environment'
-        )
+    choice(
+        name: 'ENV',
+        choices: ['dev', 'staging', 'production'],
+        description: 'Target environment'
+    )
 
-        booleanParam(
-            name: 'HEADLESS',
-            defaultValue: true,
-            description: 'Run in headless mode'
-        )
+    booleanParam(
+        name: 'HEADLESS',
+        defaultValue: true,
+        description: 'Run browser in headless mode'
+    )
 
-        string(
-            name: 'PARALLEL_WORKERS',
-            defaultValue: '4',
-            description: 'Number of parallel workers'
-        )
-    }
+    string(
+        name: 'PARALLEL_WORKERS',
+        defaultValue: '4',
+        description: 'Number of parallel workers'
+    )
+}
 
-    environment {
-        TEST_ENV = "${params.ENV}"
-        BROWSER = "${params.BROWSER}"
-        HEADLESS = "${params.HEADLESS}"
-        PYTHONPATH = "${WORKSPACE}"
-    }
+environment {
+    TEST_ENV = "${params.ENV}"
+    BROWSER = "${params.BROWSER}"
+    HEADLESS = "${params.HEADLESS}"
+    PYTHONPATH = "${WORKSPACE}"
+}
 
-    stages {
+stages {
 
-        // ============================================
-        // Checkout Source Code
-        // ============================================
+    stage('Checkout') {
+        steps {
+            checkout([
+                $class: 'GitSCM',
+                branches: [[name: '*/main']],
+                userRemoteConfigs: [[
+                    url: 'https://github.com/sudheerkasha/CAPSTONE.git'
+                ]]
+            ])
 
-        stage('Checkout') {
-            steps {
-
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/sudheerkasha/CAPSTONE.git'
-                    ]]
-                ])
-
-                echo "Code checked out successfully from GitHub repository"
-            }
-        }
-
-        // ============================================
-        // Setup Python Environment
-        // ============================================
-
-        stage('Setup Environment') {
-            steps {
-
-                script {
-
-                    if (isUnix()) {
-
-                        sh '''
-                            python3 -m venv venv
-                            . venv/bin/activate
-                            pip install --upgrade pip
-                            pip install -r requirements.txt
-                        '''
-
-                    } else {
-
-                        bat '''
-                            python -m venv venv
-                            call venv\\Scripts\\activate
-                            pip install --upgrade pip
-                            pip install -r requirements.txt
-                        '''
-                    }
-                }
-            }
-        }
-
-        // ============================================
-        // API Health Check
-        // ============================================
-
-        stage('API Health Check') {
-            steps {
-
-                script {
-
-                    if (isUnix()) {
-
-                        sh '''
-                            . venv/bin/activate
-                            python -c "import requests; r=requests.get('https://practice.expandtesting.com/notes/api/health-check'); print(f'API Status: {r.status_code}')"
-                        '''
-
-                    } else {
-
-                        bat '''
-                            call venv\\Scripts\\activate
-                            python -c "import requests; r=requests.get('https://practice.expandtesting.com/notes/api/health-check'); print(f'API Status: {r.status_code}')"
-                        '''
-                    }
-                }
-            }
-        }
-
-        // ============================================
-        // Run Complete Test Suite
-        // ============================================
-
-        stage('Run Tests') {
-
-            steps {
-
-                script {
-
-                    def cmd = """
-                    pytest tests/ 
-                    -v 
-                    -s 
-                    --junitxml=reports/results.xml 
-                    --alluredir=reports/allure-results 
-                    --reruns=2 
-                    --reruns-delay=2
-                    """
-
-                    runTests(cmd)
-                }
-            }
-        }
-
-        // ============================================
-        // Generate Allure Report
-        // ============================================
-
-        stage('Generate Allure Report') {
-
-            steps {
-
-                allure(
-                    includeProperties: false,
-                    jdk: '',
-                    results: [[path: 'reports/allure-results']]
-                )
-            }
+            echo 'Code checked out successfully'
         }
     }
 
-    // ============================================
-    // Post Actions
-    // ============================================
+    stage('Verify Environment') {
+        steps {
+            sh '''
+                pwd
+                ls -la
+                python3 --version
+                which python3
+            '''
+        }
+    }
 
-    post {
+    stage('Setup Environment') {
+        steps {
+            sh '''
+                python3 -m venv venv
+                . venv/bin/activate
 
-        always {
+                python --version
+                pip install --upgrade pip
 
-            echo 'Archiving test artifacts...'
+                mkdir -p reports
+                mkdir -p reports/allure-results
 
-            archiveArtifacts(
-                artifacts: 'reports/**/*',
-                allowEmptyArchive: true
+                pip install -r requirements.txt
+            '''
+        }
+    }
+
+    stage('API Health Check') {
+        steps {
+            sh '''
+                . venv/bin/activate
+
+                python -c "
+```
+
+import requests
+r=requests.get('https://practice.expandtesting.com/notes/api/health-check')
+print('API Status:', r.status_code)
+"
+'''
+}
+}
+
+```
+    stage('Run Tests') {
+        steps {
+            sh '''
+                . venv/bin/activate
+
+                ls -la
+                ls -la tests || true
+
+                pytest tests \
+                -v \
+                -s \
+                --junitxml=reports/results.xml \
+                --alluredir=reports/allure-results \
+                --reruns=2 \
+                --reruns-delay=2
+            '''
+        }
+    }
+
+    stage('Generate Allure Report') {
+        steps {
+            allure(
+                includeProperties: false,
+                jdk: '',
+                results: [[path: 'reports/allure-results']]
             )
-
-            junit(
-                testResults: 'reports/results.xml',
-                allowEmptyResults: true
-            )
-        }
-
-        success {
-
-            echo ' All tests PASSED!'
-        }
-
-        failure {
-
-            echo ' Some tests FAILED. Check Allure report for details.'
-        }
-
-        cleanup {
-
-            cleanWs()
         }
     }
 }
 
-// ============================================
-// Helper Function
-// ============================================
+post {
 
-def runTests(String command) {
+    always {
 
-    if (isUnix()) {
+        archiveArtifacts(
+            artifacts: 'reports/**/*',
+            allowEmptyArchive: true
+        )
 
-        sh """
-            . venv/bin/activate
-            ${command}
-        """
-
-    } else {
-
-        bat """
-            call venv\\Scripts\\activate
-            ${command}
-        """
+        junit(
+            testResults: 'reports/results.xml',
+            allowEmptyResults: true
+        )
     }
+
+    success {
+        echo 'All tests PASSED!'
+    }
+
+    failure {
+        echo 'Tests FAILED. Check console and Allure report.'
+    }
+
+    cleanup {
+        cleanWs()
+    }
+}
+```
+
 }
