@@ -78,7 +78,7 @@ class TestNotesUI:
         new_count = notes_page.get_note_count()
         assert new_count == initial_count + 1, \
             f"Note count should increase by 1: was {initial_count}, now {new_count}"
-        logger.info(" TC-12: Instant note display PASSED")
+        logger.info("TC-12: Instant note display PASSED")
 
     @allure.story("Note List")
     @pytest.mark.ui
