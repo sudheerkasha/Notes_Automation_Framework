@@ -94,7 +94,6 @@ print('API Status:', r.status_code)
 }
 }
 
-```
     stage('Run Tests') {
         steps {
             sh '''
