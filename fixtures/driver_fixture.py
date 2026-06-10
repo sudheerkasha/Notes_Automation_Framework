@@ -1,11 +1,3 @@
-"""
-============================================
-WebDriver Fixture Module
-============================================
-Pytest fixtures for Selenium WebDriver lifecycle management.
-Supports Chrome, Firefox, and Edge with configurable options.
-"""
-
 import os
 import pytest
 from selenium import webdriver
@@ -37,13 +29,15 @@ def create_driver(browser_name: str = None, headless: bool = None):
     browser = (browser_name or config.get("name", "chrome")).lower()
     is_headless = headless if headless is not None else config.get("headless", False)
     window_size = config.get("window_size", "1920,1080")
-    implicit_wait = config.get("implicit_wait", 10)
-    page_load_timeout = config.get("page_load_timeout", 30)
+    implicit_wait = config.get("implicit_wait", 20)
+    page_load_timeout = config.get("page_load_timeout", 60)
 
     logger.info(f"Creating {browser} driver (headless={is_headless})")
 
     if browser == "chrome":
         options = webdriver.ChromeOptions()
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
         if is_headless:
             options.add_argument("--headless=new")
         options.add_argument(f"--window-size={window_size}")
@@ -59,6 +53,7 @@ def create_driver(browser_name: str = None, headless: bool = None):
                 driver_path = candidate
         driver = webdriver.Chrome(
             service=ChromeService(driver_path),
+            options=options,
         )
 
     elif browser == "edge":
