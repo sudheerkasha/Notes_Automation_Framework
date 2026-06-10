@@ -63,6 +63,12 @@ def create_driver(browser_name: str = None, headless: bool = None):
         options.add_argument("--disable-setuid-sandbox")
         options.add_argument("--disable-features=VizDisplayCompositor")
 
+        options.add_argument("--disable-background-networking")
+        options.add_argument("--disable-background-timer-throttling")
+        options.add_argument("--disable-renderer-backgrounding")
+        options.add_argument("--disable-backgrounding-occluded-windows")
+        options.add_argument("--disable-breakpad")
+
         options.add_experimental_option(
             "excludeSwitches",
             ["enable-logging"]
