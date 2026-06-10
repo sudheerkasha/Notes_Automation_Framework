@@ -9,10 +9,10 @@ logger = get_logger(__name__)
 
 def create_driver(browser_name: str = None, headless: bool = None):
     config = get_browser_config()
-    browser = (
-        browser_name
-        or config.get("name", "chrome")
-    ).lower()
+    browser = str(
+    browser_name
+    or config.get("name", "chrome")
+).strip().lower()
     
     is_headless = (
         headless
@@ -38,58 +38,100 @@ def create_driver(browser_name: str = None, headless: bool = None):
     logger.info(
     f"Creating {browser} driver (headless={is_headless})"
     )
+    logger.info(f"Browser value = [{browser}]")
+    print(f"Browser value = [{browser}]")
     
     if browser == "chrome":
-        options = webdriver.ChromeOptions()
+
+    options = webdriver.ChromeOptions()
+
     if is_headless:
         options.add_argument("--headless=new")
-        options.add_argument(f"--window-size={window_size}")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--disable-extensions")
-        options.add_argument("--disable-notifications")
-        options.add_argument("--remote-allow-origins=*")
-        options.add_experimental_option(
-            "excludeSwitches",
-            ["enable-logging"]
-        )
-        
-        driver = webdriver.Chrome(
-            options=options
-        )
-    elif browser == "edge":
-        options = webdriver.EdgeOptions()
+
+    options.add_argument(f"--window-size={window_size}")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-notifications")
+    options.add_argument("--remote-allow-origins=*")
+
+    driver = webdriver.Chrome(
+        options=options
+    )
+
+elif browser == "edge":
+
+    options = webdriver.EdgeOptions()
+
     if is_headless:
         options.add_argument("--headless=new")
-        options.add_argument(
-            f"--window-size={window_size}"
-        )
-        driver = webdriver.Edge(
-            service=EdgeService(
-                EdgeChromiumDriverManager().install()
-            ),
-            options=options
-        )
-    else:
-        raise ValueError(
-            f"Unsupported browser: {browser}"
-        )
-        driver.implicitly_wait(
-            implicit_wait
-        )
+
+    driver = webdriver.Edge(
+        service=EdgeService(
+            EdgeChromiumDriverManager().install()
+        ),
+        options=options
+    )
+
+else:
+    print(f"Unsupported browser received: [{browser}]")
+    raise ValueError(
+        f"Unsupported browser: {browser}"
+    )
+    
+    # if browser == "chrome":
+    #     options = webdriver.ChromeOptions()
+    # if is_headless:
+    #     options.add_argument("--headless=new")
+    #     options.add_argument(f"--window-size={window_size}")
+    #     options.add_argument("--no-sandbox")
+    #     options.add_argument("--disable-dev-shm-usage")
+    #     options.add_argument("--disable-gpu")
+    #     options.add_argument("--disable-extensions")
+    #     options.add_argument("--disable-notifications")
+    #     options.add_argument("--remote-allow-origins=*")
+    #     options.add_experimental_option(
+    #         "excludeSwitches",
+    #         ["enable-logging"]
+    #     )
         
-        driver.set_page_load_timeout(
-            page_load_timeout
-        )
-        try:
-            driver.maximize_window()
-        except Exception:
-            logger.info(
-                "Headless mode detected. Skipping maximize_window()."
-            )
-            logger.info(
-                f"{browser.capitalize()} driver created successfully"
-            )
+    #     driver = webdriver.Chrome(
+    #         options=options
+    #     )
+    # elif browser == "edge":
+    #     options = webdriver.EdgeOptions()
+    # if is_headless:
+    #     options.add_argument("--headless=new")
+    #     options.add_argument(
+    #         f"--window-size={window_size}"
+    #     )
+    #     driver = webdriver.Edge(
+    #         service=EdgeService(
+    #             EdgeChromiumDriverManager().install()
+    #         ),
+    #         options=options
+    #     )
+    # else:
+    #     raise ValueError(
+    #         f"Unsupported browser: {browser}"
+    #     )
+    #     driver.implicitly_wait(
+    #         implicit_wait
+    #     )
+        
+    #     driver.set_page_load_timeout(
+    #         page_load_timeout
+    #     )
+    #     try:
+    #         driver.maximize_window()
+    #     except Exception:
+    #         logger.info(
+    #             "Headless mode detected. Skipping maximize_window()."
+    #         )
+    #         logger.info(
+    #             f"{browser.capitalize()} driver created successfully"
+    #         )
             
-            return driver
+    #         return driver
+
