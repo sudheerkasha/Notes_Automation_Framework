@@ -56,17 +56,17 @@ def create_driver(browser_name: str = None, headless: bool = None):
     driver = webdriver.Chrome(
         options=options
     )
-elif browser == "edge":
-options = webdriver.EdgeOptions()
-if is_headless:
-    options.add_argument("--headless=new")
+    elif browser == "edge":
+       options = webdriver.EdgeOptions()
+    if is_headless:
+       options.add_argument("--headless=new")
     driver = webdriver.Edge(
         service=EdgeService(
             EdgeChromiumDriverManager().install()
         ),
         options=options
-    )
-else:
+     )
+    else:
     print(f"Unsupported browser received: [{browser}]")
     raise ValueError(
         f"Unsupported browser: {browser}"
