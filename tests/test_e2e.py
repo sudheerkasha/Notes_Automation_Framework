@@ -1,14 +1,3 @@
-"""
-============================================
-End-to-End Hybrid Test Module
-============================================
-Hybrid tests combining UI and API operations.
-Validates data consistency between UI and API layers.
-
-SCENARIO 1 (UI → API): Create note in UI, verify via API
-SCENARIO 2 (API → UI): Delete note via API, verify in UI
-"""
-
 import time
 import pytest
 import allure
@@ -23,10 +12,6 @@ logger = get_logger(__name__)
 @allure.feature("End-to-End Hybrid Tests")
 class TestE2E:
     """Hybrid test suite combining UI and API operations."""
-
-    # ============================================
-    # SCENARIO 1: UI → API (Create in UI, Verify via API)
-    # ============================================
 
     @allure.story("UI to API Consistency")
     @allure.severity(allure.severity_level.CRITICAL)
@@ -81,11 +66,8 @@ class TestE2E:
             assert api_note["category"] == category, \
                 f"Category mismatch: expected '{category}'"
 
-        logger.info("✅ TC-27: UI→API consistency PASSED")
+        logger.info(" TC-27: UI→API consistency PASSED")
 
-    # ============================================
-    # SCENARIO 2: API → UI (Delete via API, Verify in UI)
-    # ============================================
 
     @allure.story("API to UI Sync")
     @allure.severity(allure.severity_level.CRITICAL)
@@ -135,11 +117,7 @@ class TestE2E:
             assert not notes_page.is_note_displayed(title), \
                 f"Deleted note '{title}' should NOT appear in UI"
 
-        logger.info("✅ TC-28: API→UI sync PASSED")
-
-    # ============================================
-    # SCENARIO 3: Full CRUD Cycle
-    # ============================================
+        logger.info(" TC-28: API→UI sync PASSED")
 
     @allure.story("Full CRUD Cycle")
     @pytest.mark.e2e
@@ -204,11 +182,7 @@ class TestE2E:
             assert not notes_page.is_note_displayed(updated_title), \
                 "Deleted note should not appear in UI"
 
-        logger.info("✅ TC-29: Full CRUD hybrid PASSED")
-
-    # ============================================
-    # PERFORMANCE: UI Load Timing
-    # ============================================
+        logger.info(" TC-29: Full CRUD hybrid PASSED")
 
     @allure.story("UI Performance")
     @pytest.mark.e2e
@@ -224,4 +198,4 @@ class TestE2E:
 
         assert load_time < 5.0, \
             f"Page load time {load_time:.2f}s exceeds 5s threshold"
-        logger.info(f"✅ TC-30: Page load {load_time:.2f}s PASSED")
+        logger.info(f" TC-30: Page load {load_time:.2f}s PASSED")
