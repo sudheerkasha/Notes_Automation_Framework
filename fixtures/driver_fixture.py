@@ -81,48 +81,48 @@ def create_driver(browser_name: str = None, headless: bool = None):
                 f"Unsupported execution mode: {execution_mode}. "
                 f"Use 'local' or 'remote'."
             )
-        elif browser == "edge":
-            options = webdriver.EdgeOptions()
-            if is_headless:
-                options.add_argument("--headless=new")
-                options.add_argument(
-                    f"--window-size={window_size}"
-                )
-                if execution_mode == "remote":
+    elif browser == "edge":
+        options = webdriver.EdgeOptions()
+        if is_headless:
+            options.add_argument("--headless=new")
+            options.add_argument(
+                f"--window-size={window_size}"
+            )
+            if execution_mode == "remote":
                     
-                    logger.info(
-                        f"Connecting Edge to Selenium Grid: {grid_url}"
-                    )
-                    driver = webdriver.Remote(
-                        command_executor=grid_url,
-                        options=options
-                    )
-                elif execution_mode == "local":
-                    driver = webdriver.Edge(
-                        service=EdgeService(
-                            EdgeChromiumDriverManager().install()
-                        ),
-                        options=options
-                    )
-                else:
-                    raise ValueError(
-                        f"Unsupported execution mode: {execution_mode}. "
-                        f"Use 'local' or 'remote'."
-                    )
-                else:
-                    raise ValueError(
-                        f"Unsupported browser: {browser}"
-                    )
-                    driver.implicitly_wait(implicit_wait)
-                    driver.set_page_load_timeout(page_load_timeout)
-                    if not is_headless:
-                        try:
-                            driver.maximize_window()
-                        except Exception:
-                            pass
-                            logger.info(
-                                f"{browser.capitalize()} driver created successfully "
-                                f"using {execution_mode} execution
-                                )
+                logger.info(
+                    f"Connecting Edge to Selenium Grid: {grid_url}"
+                )
+                driver = webdriver.Remote(
+                    command_executor=grid_url,
+                    options=options
+                )
+            elif execution_mode == "local":
+                driver = webdriver.Edge(
+                    service=EdgeService(
+                        EdgeChromiumDriverManager().install()
+                    ),
+                    options=options
+                )
+            else:
+                raise ValueError(
+                    f"Unsupported execution mode: {execution_mode}. "
+                    f"Use 'local' or 'remote'."
+                )
+            else:
+                raise ValueError(
+                    f"Unsupported browser: {browser}"
+                )
+                driver.implicitly_wait(implicit_wait)
+                driver.set_page_load_timeout(page_load_timeout)
+                if not is_headless:
+                    try:
+                        driver.maximize_window()
+                    except Exception:
+                        pass
+                        logger.info(
+                            f"{browser.capitalize()} driver created successfully "
+                            f"using {execution_mode} execution
+                            )
                                 
-                                return driver
+                            return driver
