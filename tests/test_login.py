@@ -52,7 +52,7 @@ class TestLogin:
         self.login_page.full_login(self.email, self.password)
         assert self.login_page.is_login_successful(), \
             "Login should succeed with valid credentials"
-        logger.info(" TC-01: Valid login PASSED")
+        logger.info("✅ TC-01: Valid login PASSED")
 
     @allure.story("Valid Login")
     @pytest.mark.ui
@@ -64,7 +64,7 @@ class TestLogin:
         current_url = self.driver.current_url
         assert "/notes/app" in current_url, \
             f"Should redirect to notes page, got: {current_url}"
-        logger.info(" TC-02: Login redirect PASSED")
+        logger.info("✅ TC-02: Login redirect PASSED")
 
     # ----- NEGATIVE TESTS -----
 
@@ -77,7 +77,7 @@ class TestLogin:
         self.login_page.full_login("invalid@wrong.com", self.password)
         assert not self.login_page.is_login_successful(), \
             "Login should fail with invalid email"
-        logger.info(" TC-03: Invalid email login PASSED")
+        logger.info("✅ TC-03: Invalid email login PASSED")
 
     @allure.story("Invalid Login")
     @pytest.mark.ui
@@ -87,31 +87,31 @@ class TestLogin:
         self.login_page.full_login(self.email, "WrongPassword@999")
         assert not self.login_page.is_login_successful(), \
             "Login should fail with wrong password"
-        logger.info("TC-04: Invalid password PASSED")
+        logger.info("✅ TC-04: Invalid password PASSED")
 
-    # @allure.story("Invalid Login")
-    # @pytest.mark.ui
-    # @pytest.mark.negative
-    # def test_empty_email(self):
-    #     """TC-05: Verify login fails with empty email."""
-    #     self.login_page.navigate_to_login()
-    #     self.login_page.enter_password(self.password)
-    #     self.login_page.click_login()
-    #     assert not self.login_page.is_login_successful(), \
-    #         "Login should fail with empty email"
-    #     logger.info(" TC-05: Empty email PASSED")
+    @allure.story("Invalid Login")
+    @pytest.mark.ui
+    @pytest.mark.negative
+    def test_empty_email(self):
+        """TC-05: Verify login fails with empty email."""
+        self.login_page.navigate_to_login()
+        self.login_page.enter_password(self.password)
+        self.login_page.click_login()
+        assert not self.login_page.is_login_successful(), \
+            "Login should fail with empty email"
+        logger.info("✅ TC-05: Empty email PASSED")
 
-    # @allure.story("Invalid Login")
-    # @pytest.mark.ui
-    # @pytest.mark.negative
-    # def test_empty_password(self):
-    #     """TC-06: Verify login fails with empty password."""
-    #     self.login_page.navigate_to_login()
-    #     self.login_page.enter_email(self.email)
-    #     self.login_page.click_login()
-    #     assert not self.login_page.is_login_successful(), \
-    #         "Login should fail with empty password"
-    #     logger.info(" TC-06: Empty password PASSED")
+    @allure.story("Invalid Login")
+    @pytest.mark.ui
+    @pytest.mark.negative
+    def test_empty_password(self):
+        """TC-06: Verify login fails with empty password."""
+        self.login_page.navigate_to_login()
+        self.login_page.enter_email(self.email)
+        self.login_page.click_login()
+        assert not self.login_page.is_login_successful(), \
+            "Login should fail with empty password"
+        logger.info("✅ TC-06: Empty password PASSED")
 
     @allure.story("Invalid Login")
     @pytest.mark.ui
@@ -122,16 +122,16 @@ class TestLogin:
         self.login_page.click_login()
         assert not self.login_page.is_login_successful(), \
             "Login should fail with both fields empty"
-        logger.info(" TC-07: Both fields empty PASSED")
+        logger.info("✅ TC-07: Both fields empty PASSED")
 
     # ----- UI VERIFICATION -----
 
-    # @allure.story("Login Page UI")
-    # @pytest.mark.ui
-    # @pytest.mark.regression
-    # def test_login_page_elements_displayed(self):
-    #     """TC-08: Verify all login page elements are present."""
-    #     self.login_page.navigate_to_login()
-    #     assert self.login_page.is_login_page_displayed(), \
-    #         "Login page should display email and password fields"
-    #     logger.info(" TC-08: Login page elements PASSED")
+    @allure.story("Login Page UI")
+    @pytest.mark.ui
+    @pytest.mark.regression
+    def test_login_page_elements_displayed(self):
+        """TC-08: Verify all login page elements are present."""
+        self.login_page.navigate_to_login()
+        assert self.login_page.is_login_page_displayed(), \
+            "Login page should display email and password fields"
+        logger.info("✅ TC-08: Login page elements PASSED")
