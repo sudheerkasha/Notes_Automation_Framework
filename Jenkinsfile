@@ -1,113 +1,88 @@
 pipeline {
+    
 agent any
 
-```
 parameters {
+
     choice(
         name: 'BROWSER',
         choices: ['chrome', 'firefox', 'edge'],
         description: 'Browser for UI tests'
     )
 
-    choice(
-        name: 'ENV',
-        choices: ['dev', 'staging', 'production'],
-        description: 'Target environment'
-    )
-
     booleanParam(
         name: 'HEADLESS',
         defaultValue: true,
-        description: 'Run browser in headless mode'
-    )
-
-    string(
-        name: 'PARALLEL_WORKERS',
-        defaultValue: '4',
-        description: 'Number of parallel workers'
+        description: 'Run tests in headless mode'
     )
 }
 
 environment {
-    TEST_ENV = "${params.ENV}"
-    BROWSER = "${params.BROWSER}"
-    HEADLESS = "${params.HEADLESS}"
     PYTHONPATH = "${WORKSPACE}"
+    TEST_BROWSER = "${params.BROWSER}"
+    HEADLESS_MODE = "${params.HEADLESS}"
 }
 
 stages {
 
-    stage('Checkout') {
+    stage('Clean Workspace') {
         steps {
-            checkout scm
-            echo 'Code checked out successfully'
+            cleanWs()
+            echo 'Workspace cleaned successfully'
+        }
+    }
+
+    stage('Checkout Code') {
+        steps {
+            git(
+                branch: 'main',
+                url: 'https://github.com/sudheerkasha/NOTES_AUTOMATION_FRAMEWORK_CAP.git'
+            )
+
+            echo 'Repository cloned successfully'
         }
     }
 
     stage('Verify Environment') {
         steps {
             sh '''
-                echo "Workspace:"
+                echo "===== WORKSPACE ====="
                 pwd
 
-                echo "Files:"
+                echo "===== FILES ====="
                 ls -la
-
-                echo "Python Version:"
-                python3 --version
-
-                echo "Python Location:"
-                which python3
             '''
         }
     }
 
-    stage('Setup Environment') {
+    stage('Setup Python Environment') {
         steps {
             sh '''
+                python3 --version
+
                 python3 -m venv venv
 
                 . venv/bin/activate
 
-                python --version
-
-                pip install --upgrade pip
-
-                mkdir -p reports
-                mkdir -p reports/allure-results
+                python -m pip install --upgrade pip
 
                 pip install -r requirements.txt
             '''
+
+            echo 'Python environment setup completed'
         }
     }
-    stage('Debug Jenkinsfile Version') {
-    steps {
-        sh '''
-            echo "DEBUG STAGE EXECUTED"
-        '''
-    }
-}
 
-    stage('API Health Check') {
+    stage('Collect Tests') {
         steps {
             sh '''
                 . venv/bin/activate
-                python -c 'import requests; r=requests.get("https://practice.expandtesting.com/notes/api/health-check"); print("API Status:", r.status_code)'
-            '''
-        }
-    }
 
-    stage('Verify Test Structure') {
-        steps {
-            sh '''
-                echo "Current Directory:"
-                pwd
+                echo "===== PYTEST VERSION ====="
+                pytest --version
 
-                echo "Project Files:"
-                ls -la
-
-                echo "Tests Folder:"
-                ls -la tests || true
+                echo "===== COLLECT TESTS ====="
+                pytest --collect-only -q
             '''
         }
     }
@@ -117,24 +92,30 @@ stages {
             sh '''
                 . venv/bin/activate
 
+                mkdir -p reports
+                rm -rf reports/allure-results
+
                 pytest tests \
                 -v \
                 -s \
+                --cache-clear \
                 --junitxml=reports/results.xml \
-                --alluredir=reports/allure-results \
-                --reruns=2 \
-                --reruns-delay=2
+                --alluredir=reports/allure-results
             '''
         }
     }
 
     stage('Generate Allure Report') {
         steps {
-            allure(
-                includeProperties: false,
-                jdk: '',
-                results: [[path: 'reports/allure-results']]
-            )
+            script {
+                if (fileExists('reports/allure-results')) {
+                    allure(
+                        includeProperties: false,
+                        jdk: '',
+                        results: [[path: 'reports/allure-results']]
+                    )
+                }
+            }
         }
     }
 }
@@ -142,8 +123,6 @@ stages {
 post {
 
     always {
-
-        echo 'Archiving reports...'
 
         archiveArtifacts(
             artifacts: 'reports/**/*',
@@ -154,20 +133,23 @@ post {
             testResults: 'reports/results.xml',
             allowEmptyResults: true
         )
+
+        echo 'Reports archived successfully'
     }
 
     success {
-        echo 'All tests PASSED!'
+        echo 'Pipeline executed successfully'
     }
 
     failure {
-        echo 'Tests FAILED. Check console logs and Allure report.'
+        echo 'Pipeline execution failed'
     }
 
     cleanup {
-        cleanWs()
+        cleanWs(
+            deleteDirs: true,
+            disableDeferredWipeout: true
+        )
     }
 }
-```
-
 }
