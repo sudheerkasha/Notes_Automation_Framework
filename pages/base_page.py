@@ -1,15 +1,3 @@
-"""
-============================================
-Base Page Object
-============================================
-Foundation class for all Page Objects in the framework.
-Implements common Selenium operations with:
-- Explicit waits (WebDriverWait)
-- Self-healing locator strategy
-- Screenshot on failure
-- Allure step logging
-"""
-
 import time
 import allure
 from selenium.webdriver.common.by import By
